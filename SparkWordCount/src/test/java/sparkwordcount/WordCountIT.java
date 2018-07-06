@@ -35,8 +35,8 @@ public class WordCountIT {
     public static void setUpClass() {
         SparkConf conf = new SparkConf();
         conf.setMaster("yarn");
-        conf.set("spark.hadoop.fs.defaultFS","hdfs://localhost:9000");
-        conf.set("spark.hadoop.yarn.resourcemanager.hostname","localhost");
+        conf.set("spark.hadoop.fs.defaultFS","hdfs://ip-172-31-6-233.ap-south-1.compute.internal:9000");
+        conf.set("spark.hadoop.yarn.resourcemanager.hostname","ip-172-31-6-233.ap-south-1.compute.internal");
         conf.setSparkHome("/usr/local/spark");
         conf.setAppName("junit");
         String[] jars = {"target/" + System.getProperty("finalName") + ".jar"};
