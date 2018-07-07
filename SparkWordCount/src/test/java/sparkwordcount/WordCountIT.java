@@ -35,14 +35,16 @@ public class WordCountIT {
         String hadoop_master = System.getProperty("hadoop_master");
         String env_type = System.getProperty("env_type");
 
+        
         SparkConf conf = new SparkConf();
-        conf.setMaster("yarn");
+        
         conf.set("spark.hadoop.fs.defaultFS", "hdfs://" + hadoop_master + ":9000");
         conf.set("spark.hadoop.yarn.resourcemanager.hostname", hadoop_master);
         conf.setSparkHome("/usr/local/spark");
         conf.setAppName("junit");
         String[] jars = {"target/" + System.getProperty("finalName") + ".jar"};
         conf.setJars(jars);
+        conf.setMaster("yarn");
         sc = new JavaSparkContext(conf);
     }
 
