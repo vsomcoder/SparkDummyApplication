@@ -3,3 +3,8 @@ os: linux
 files:
   - source: /target/SparkWordCount-1.0-SNAPSHOT.jar
     destination: /home/ubuntu
+permissions:
+ - object: /home/ubuntu/SparkWordCount-1.0-SNAPSHOT.jar
+   owner: ubuntu
+   group: ubuntu
+   mode:  750 
