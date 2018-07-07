@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.hadoop.security.Credentials;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.deploy.SparkHadoopUtil;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -41,6 +43,7 @@ public class WordCountIT {
         String env_type = System.getProperty("env_type");
         conf.set("spark.hadoop.fs.defaultFS", "hdfs://" + hadoop_master + ":9000");
         conf.set("spark.hadoop.yarn.resourcemanager.hostname", hadoop_master);
+        conf.set("hadoop.security.authentication", "kerberos");
         conf.setSparkHome("/usr/local/spark");
         conf.setAppName("junit");
         String[] jars = {"target/" + System.getProperty("finalName") + ".jar"};
@@ -50,6 +53,9 @@ public class WordCountIT {
         if ("aws".equals(env_type)) {
             System.out.print("Printing environment..inside" + env_type);
             try {
+                UserGroupInformation.setConfiguration(SparkHadoopUtil.get().newConfiguration(conf)); 
+                Credentials credentials = UserGroupInformation.getLoginUser().getCredentials();
+                SparkHadoopUtil.get().addCurrentUserCredentials(credentials);
                 UserGroupInformation.loginUserFromKeytab("kamal@SKAMALJ.AWS", "/user/ubuntu/kamal.keytab");
             } catch (IOException ex) {
                 Logger.getLogger(WordCountIT.class.getName()).log(Level.SEVERE, null, ex);
