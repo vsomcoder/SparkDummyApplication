@@ -45,7 +45,9 @@ public class WordCountIT {
         conf.setAppName("junit");
         String[] jars = {"target/" + System.getProperty("finalName") + ".jar"};
         conf.setJars(jars);
+        System.out.print("Printing environment" + env_type);
         if ("aws".equals(env_type)) {
+            System.out.print("Printing environment..inside" + env_type);
             try {
                 UserGroupInformation.loginUserFromKeytab("kamal@SKAMALJ.AWS", "/user/ubuntu/kamal.keytab");
             } catch (IOException ex) {
