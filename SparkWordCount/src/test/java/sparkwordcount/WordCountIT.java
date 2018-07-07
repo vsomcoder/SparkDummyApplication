@@ -43,7 +43,7 @@ public class WordCountIT {
         String env_type = System.getProperty("env_type");
         conf.set("spark.hadoop.fs.defaultFS", "hdfs://" + hadoop_master + ":9000");
         conf.set("spark.hadoop.yarn.resourcemanager.hostname", hadoop_master);
-        conf.set("hadoop.security.authentication", "kerberos");
+        conf.set("spark.hadoop.hadoop.security.authentication", "kerberos");
         conf.setSparkHome("/usr/local/spark");
         conf.setAppName("junit");
         String[] jars = {"target/" + System.getProperty("finalName") + ".jar"};
@@ -56,7 +56,7 @@ public class WordCountIT {
                 UserGroupInformation.setConfiguration(SparkHadoopUtil.get().newConfiguration(conf)); 
                 Credentials credentials = UserGroupInformation.getLoginUser().getCredentials();
                 SparkHadoopUtil.get().addCurrentUserCredentials(credentials);
-                UserGroupInformation.loginUserFromKeytab("kamal@SKAMALJ.AWS", "/user/ubuntu/kamal.keytab");
+                UserGroupInformation.loginUserFromKeytab("kamal@SKAMALJ.AWS", "/home/ubuntu/kamal.keytab");
             } catch (IOException ex) {
                 Logger.getLogger(WordCountIT.class.getName()).log(Level.SEVERE, null, ex);
             }
