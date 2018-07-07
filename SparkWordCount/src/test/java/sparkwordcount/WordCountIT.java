@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.Credentials;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.spark.SparkConf;
@@ -37,20 +38,28 @@ public class WordCountIT {
 
     @BeforeClass
     public static void setUpClass() {
-        SparkConf conf = new SparkConf();
-        conf.setMaster("yarn");
         String hadoop_master = System.getProperty("hadoop_master");
         String env_type = System.getProperty("env_type");
+        
+        SparkConf conf = new SparkConf();
+        Configuration hadoop_conf = new Configuration();
+        hadoop_conf.set("spark.hadoop.fs.defaultFS", "hdfs://" + hadoop_master + ":9000");
+        conf.set("hadoop.security.authentication", "kerberos");
+        conf.set("hadoop.security.authorization", "true");
+        
+        conf.setMaster("yarn");
+        conf.set("spark.yarn.access.namenodes","hdfs://" + hadoop_master + ":9000");
         conf.set("spark.hadoop.fs.defaultFS", "hdfs://" + hadoop_master + ":9000");
         conf.set("spark.hadoop.yarn.resourcemanager.hostname", hadoop_master);
         conf.set("spark.hadoop.hadoop.security.authentication", "kerberos");
+        conf.set("spark.hadoop.hadoop.security.authorization", "true");
         conf.setSparkHome("/usr/local/spark");
         conf.setAppName("junit");
         String[] jars = {"target/" + System.getProperty("finalName") + ".jar"};
         conf.setJars(jars);
         if ("aws".equals(env_type)) {
             try {
-                UserGroupInformation.setConfiguration(SparkHadoopUtil.get().newConfiguration(conf)); 
+                UserGroupInformation.setConfiguration(hadoop_conf); 
                 UserGroupInformation.loginUserFromKeytab("kamal@SKAMALJ.AWS", "/home/ubuntu/kamal.keytab");
             } catch (IOException ex) {
                 Logger.getLogger(WordCountIT.class.getName()).log(Level.SEVERE, null, ex);
