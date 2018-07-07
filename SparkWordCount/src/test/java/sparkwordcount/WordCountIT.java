@@ -45,6 +45,7 @@ public class WordCountIT {
         conf.setAppName("junit");
         String[] jars = {"target/" + System.getProperty("finalName") + ".jar"};
         conf.setJars(jars);
+        Logger.getLogger(WordCountIT.class.getName()).log(Level.INFO, null, "kamal..Test printing");
         System.out.print("Printing environment" + env_type);
         if ("aws".equals(env_type)) {
             System.out.print("Printing environment..inside" + env_type);
