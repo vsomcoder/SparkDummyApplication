@@ -48,14 +48,9 @@ public class WordCountIT {
         conf.setAppName("junit");
         String[] jars = {"target/" + System.getProperty("finalName") + ".jar"};
         conf.setJars(jars);
-        Logger.getLogger(WordCountIT.class.getName()).log(Level.INFO, null, "kamal..Test printing");
-        System.out.print("Printing environment" + env_type);
         if ("aws".equals(env_type)) {
-            System.out.print("Printing environment..inside" + env_type);
             try {
                 UserGroupInformation.setConfiguration(SparkHadoopUtil.get().newConfiguration(conf)); 
-                Credentials credentials = UserGroupInformation.getLoginUser().getCredentials();
-                SparkHadoopUtil.get().addCurrentUserCredentials(credentials);
                 UserGroupInformation.loginUserFromKeytab("kamal@SKAMALJ.AWS", "/home/ubuntu/kamal.keytab");
             } catch (IOException ex) {
                 Logger.getLogger(WordCountIT.class.getName()).log(Level.SEVERE, null, ex);
