@@ -45,8 +45,8 @@ public class WordCountIT {
         conf.setJars(jars);
         if ("aws".equals(env_type)) {
             conf.set("spark.yarn.access.namenodes", "hdfs://" + hadoop_master + ":9000");
-            conf.set("spark.yarn.keytab", "/home/ubuntu/kamal.keytab");
-            conf.set("spark.yarn.principal", "kamal2@SKAMALJ.AWS");
+            conf.set("spark.yarn.keytab", "/home/ubuntu/yarn.keytab");
+            conf.set("spark.yarn.principal", "yarn/ip-172-31-6-233.ap-south-1.compute.internal@SKAMALJ.AWS");
             conf.set("spark.hadoop.hadoop.security.authentication", "kerberos");
             conf.set("spark.hadoop.hadoop.security.authorization", "true");
         }
