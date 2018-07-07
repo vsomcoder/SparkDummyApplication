@@ -42,6 +42,32 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
+    <profiles>
+    <profile>
+      <id>env-local</id>
+      <activation>
+        <property>
+          <name>env</name>
+          <value>local</value>
+        </property>
+      </activation>
+      <properties>
+          <hadoop_master>localhost</hadoop_master>
+      </properties>
+    </profile>
+    <profile>
+      <id>env-aws</id>
+      <activation>
+        <property>
+          <name>env</name>
+          <value>aws</value>
+        </property>
+      </activation>
+      <properties>
+          <hadoop_master>ip-172-31-6-233.ap-south-1.compute.internal</hadoop_master>
+      </properties>
+    </profile>
+    </profiles>
     <build>
         <plugins>
             <plugin>
@@ -50,7 +76,9 @@
                 <version>2.22.0</version>
                 <configuration>
                     <systemPropertyVariables>
+                        <env_type>${env}</env_type>
                         <finalName>${project.build.finalName}</finalName>
+                        <hadoop_master>${hadoop_master}</hadoop_master>
                     </systemPropertyVariables>
                 </configuration>
                 <executions>

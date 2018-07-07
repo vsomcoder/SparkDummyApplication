@@ -8,6 +8,9 @@ package sparkwordcount;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -24,35 +27,43 @@ import scala.Tuple2;
  * @author kamal
  */
 public class WordCountIT {
-    
+
     private static JavaSparkContext sc;
 
-    
     public WordCountIT() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
         SparkConf conf = new SparkConf();
         conf.setMaster("yarn");
-        conf.set("spark.hadoop.fs.defaultFS","hdfs://ip-172-31-6-233.ap-south-1.compute.internal:9000");
-        conf.set("spark.hadoop.yarn.resourcemanager.hostname","ip-172-31-6-233.ap-south-1.compute.internal");
+        String hadoop_master = System.getProperty("hadoop_master");
+        String env_type = System.getProperty("env_type");
+        conf.set("spark.hadoop.fs.defaultFS", "hdfs://" + hadoop_master + ":9000");
+        conf.set("spark.hadoop.yarn.resourcemanager.hostname", hadoop_master);
         conf.setSparkHome("/usr/local/spark");
         conf.setAppName("junit");
         String[] jars = {"target/" + System.getProperty("finalName") + ".jar"};
         conf.setJars(jars);
-        sc = new JavaSparkContext(conf); 
+        if ("aws".equals(env_type)) {
+            try {
+                UserGroupInformation.loginUserFromKeytab("kamal@SKAMALJ.AWS", "/user/ubuntu/kamal.keytab");
+            } catch (IOException ex) {
+                Logger.getLogger(WordCountIT.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        sc = new JavaSparkContext(conf);
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void init() throws IllegalArgumentException, IOException {
         //ctxtBuilder = new ContextBuilder(tempFolder);
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -62,8 +73,8 @@ public class WordCountIT {
      */
     @Test
     public void test_one() {
-        WordCount  wc = new WordCount();
-        JavaPairRDD<String, Integer> rdd,result_rdd;
+        WordCount wc = new WordCount();
+        JavaPairRDD<String, Integer> rdd, result_rdd;
         List<Tuple2<String, Integer>> result_list;
         result_list = new ArrayList();
         result_list.add(new Tuple2<>("a", 3));
@@ -78,10 +89,11 @@ public class WordCountIT {
         assertEquals(0, a);
 
     }
+
     @Test
     public void test_two() {
-        WordCount  wc = new WordCount();
-        JavaPairRDD<String, Integer> rdd,result_rdd;
+        WordCount wc = new WordCount();
+        JavaPairRDD<String, Integer> rdd, result_rdd;
         List<Tuple2<String, Integer>> result_list;
         result_list = new ArrayList();
         result_list.add(new Tuple2<>("a", 3));
@@ -96,10 +108,11 @@ public class WordCountIT {
         assertEquals(1, a);
 
     }
+
     @Test
     public void test_three() {
-        WordCount  wc = new WordCount();
-        JavaPairRDD<String, Integer> rdd,result_rdd;
+        WordCount wc = new WordCount();
+        JavaPairRDD<String, Integer> rdd, result_rdd;
         List<Tuple2<String, Integer>> result_list;
         result_list = new ArrayList();
         result_list.add(new Tuple2<>("a", 3));
@@ -114,5 +127,5 @@ public class WordCountIT {
         assertEquals(12, a);
 
     }
-    
+
 }
