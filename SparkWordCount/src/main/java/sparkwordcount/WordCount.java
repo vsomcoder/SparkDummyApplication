@@ -5,11 +5,18 @@
  */
 package sparkwordcount;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.util.Utils;
 import scala.Tuple2;
 
 /**
@@ -27,9 +34,9 @@ public class WordCount {
         SparkConf conf = new SparkConf().setAppName("wordcount");
         conf.setMaster("yarn");
 
-        JavaRDD<String> line = wc.readFile("passwd", conf);
+        JavaRDD<String> line = wc.readFile(args[0], conf);
 
-        wc.saveOutput(wc.getCounts(line), "passwd.out2");
+        wc.saveOutput(wc.getCounts(line), args[1]);
 
     }
 
@@ -47,7 +54,13 @@ public class WordCount {
     }
 
     void saveOutput(JavaPairRDD<String, Integer> counts, String outfile) {
-        counts.saveAsTextFile(outfile);
+        try {
+            FileSystem hdfs = FileSystem.get(sc.hadoopConfiguration());
+            hdfs.delete(new Path(outfile), true);
+            counts.saveAsTextFile(outfile);
+        } catch (IOException ex) {
+            Logger.getLogger(WordCount.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }
