@@ -23,6 +23,7 @@
             </goals>
             <properties>
                 <Env.SPARK_HOME>/usr/local/spark</Env.SPARK_HOME>
+                <env>local</env>
             </properties>
         </action>
         <action>
