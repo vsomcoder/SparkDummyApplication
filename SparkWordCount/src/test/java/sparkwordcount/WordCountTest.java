@@ -1,7 +1,7 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This just test getCounts function. Filename  "*Test" are run by maven at test
+ * stage and these are unit test i.e run before packaging is done 
+ * or before jar is bundeled.
  */
 package sparkwordcount;
 
@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -23,7 +22,7 @@ import static org.junit.Assert.*;
  */
 public class WordCountTest {
     
-    private JavaSparkContext sc;
+    private static WordCount wc;
 
     
     public WordCountTest() {
@@ -31,6 +30,10 @@ public class WordCountTest {
     
     @BeforeClass
     public static void setUpClass() {
+        SparkConf conf = new SparkConf();
+        conf.setMaster("local");
+        conf.setAppName("junit");
+        wc = new WordCount(conf); 
     }
     
     @AfterClass
@@ -39,12 +42,6 @@ public class WordCountTest {
     
     @Before
     public void init() throws IllegalArgumentException, IOException {
-        //ctxtBuilder = new ContextBuilder(tempFolder);
-        
-        SparkConf conf = new SparkConf();
-        conf.setMaster("local");
-        conf.setAppName("junit");
-        sc = new JavaSparkContext(conf); 
     }
     
     @After
@@ -56,9 +53,8 @@ public class WordCountTest {
      */
     @Test
     public void test() {
-        WordCount  wc = new WordCount();
         JavaPairRDD<String, Integer> rdd;
-        rdd = wc.getCounts(sc.parallelize(Arrays.asList("a","a"))); 
+        rdd = wc.getCounts(wc.getContext().parallelize(Arrays.asList("a","a"))); 
         long a = rdd.collect().size();
         assertEquals(1, a);
 

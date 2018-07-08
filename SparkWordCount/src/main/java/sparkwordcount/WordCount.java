@@ -1,11 +1,12 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This is a simple wordcount program written in Spark to demonstrate JUNIT use
+ * to execute unit and integration tests. Program is split in three functions 
+ * readfile, getCounts and saveOutput. 
+ * getCount function  is tested in UT whereas IT tests readFile and getCounts.
+ * Context setter and getter is written to enable testing from different environemnts.
  */
 package sparkwordcount;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -16,7 +17,6 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.util.Utils;
 import scala.Tuple2;
 
 /**
@@ -25,23 +25,26 @@ import scala.Tuple2;
  */
 public class WordCount {
 
-    static JavaSparkContext sc;
+    JavaSparkContext sc;
 
     public static void main(String[] args) throws Exception {
-
-        WordCount wc = new WordCount();
-
-        SparkConf conf = new SparkConf().setAppName("wordcount");
-        conf.setMaster("yarn");
-
-        JavaRDD<String> line = wc.readFile(args[0], conf);
-
+        SparkConf conf = new SparkConf().
+                setAppName("wordcount").
+                setMaster("yarn");        
+        WordCount wc = new WordCount(conf);
+        JavaRDD<String> line = wc.readFile(args[0]);
         wc.saveOutput(wc.getCounts(line), args[1]);
-
     }
 
-    JavaRDD<String> readFile(String file, SparkConf conf) {
+    WordCount(SparkConf conf) {
         sc = new JavaSparkContext(conf);
+    }
+    
+    JavaSparkContext getContext() {
+        return sc;
+    }
+    
+    JavaRDD<String> readFile(String file) {
         return sc.textFile(file);
     }
 
