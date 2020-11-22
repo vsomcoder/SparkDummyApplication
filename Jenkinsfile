@@ -1,19 +1,22 @@
 pipeline {
-    agent any 
+    agent any
+    tools {
+        maven 'maven363'
+    } 
     stages {
-        stage('Build') { 
+        stage('Compile') { 
             steps {
-                echo 'Hello World' 
+                sh 'cd SparkWordCount && mvn clean compile' 
             }
         }
-        stage('Test') { 
+        stage('Unit Test') { 
             steps {
-                echo 'Hello World'
+                sh 'cd SparkWordCount && mvn clean test'
             }
         }
-        stage('Deploy') { 
+        stage('Package') { 
             steps {
-                echo 'Hello World'
+                sh 'cd SparkWordCount && mvn clean package'
             }
         }
     }
